@@ -5,7 +5,7 @@ import COLORS from '../../Assets/colors';
 import { useAuth } from '../../Context/AuthContext';
 
 const SignIn = () => {
-  const { setIsAuthenticated } = useAuth();
+  const { setUserType, setIsAuthenticated } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +17,7 @@ const SignIn = () => {
   };
 
   const onSubmit = () => {
+    setUserType('rfq');
     setIsAuthenticated(true);
   };
 
@@ -51,6 +52,7 @@ const SignIn = () => {
             id='password'
             className='block py-2.5 px-0 pr-10 w-full text-lg text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer'
             required
+            placeholder=''
           />
           <label
             htmlFor='password'

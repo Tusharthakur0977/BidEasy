@@ -1,10 +1,10 @@
 import React, {
   createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
   useContext,
   useState,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
 } from 'react';
 
 export interface IUser {
@@ -13,11 +13,15 @@ export interface IUser {
   email: string;
 }
 
+type UserType = 'vendor' | 'rfq';
+
 export interface AuthContextType {
   user: IUser | null;
   setUser: Dispatch<SetStateAction<IUser | null>>;
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  userType: UserType;
+  setUserType: Dispatch<SetStateAction<UserType>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,10 +33,18 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userType, setUserType] = useState<UserType>('rfq');
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isAuthenticated, setIsAuthenticated }}
+      value={{
+        user,
+        setUser,
+        isAuthenticated,
+        setIsAuthenticated,
+        userType,
+        setUserType,
+      }}
     >
       {children}
     </AuthContext.Provider>

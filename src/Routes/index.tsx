@@ -1,26 +1,49 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ProtectedRoute from './ProtectedRoute';
-import UnProtectedRoute from './UnProtectedRoute';
-import PageNotFound from '../Pages/PageNotFound';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import MainLayout from '../Layout/MainLayout';
 import UnAuthLayout from '../Layout/UnAuthLayout';
-import Dashboard from '../Pages/Dashboard';
-import SignIn from '../Pages/SignIn';
-import SignUp from '../Pages/SignUp';
 import DocsCheckList from '../Pages/DocsCheckList';
 import { HelpVideo } from '../Pages/HelpVideo/HelpVideo';
-import UserManual from '../Pages/UserManual';
-import Support from '../Pages/Support';
+import PageNotFound from '../Pages/PageNotFound';
 import PanRegister from '../Pages/PanRegister';
 import SetPassword from '../Pages/SetPassword';
-import BankDetails from '../Pages/BankDetails';
-import Account from '../Pages/Account';
+import SignIn from '../Pages/SignIn';
+import SignUp from '../Pages/SignUp';
+import Support from '../Pages/Support';
+import UserManual from '../Pages/UserManual';
+import Account from '../Pages/Vendor/Account';
+import BankDetails from '../Pages/Vendor/BankDetails';
+import VendorDashboard from '../Pages/Vendor/Dashboard';
+import Invoices from '../Pages/Vendor/Invoices';
+import Orders from '../Pages/Vendor/Orders';
+import ProtectedRoute from './ProtectedRoute';
+import UnProtectedRoute from './UnProtectedRoute';
+import RfqDashboard from '../Pages/RFQ/RfqDashboard';
+import { useAuth } from '../Context/AuthContext';
 
 const Routing = () => {
+  const { userType, isAuthenticated } = useAuth();
   const router = createBrowserRouter([
     {
       path: '/',
+      element: (
+        <Navigate
+          to={
+            isAuthenticated
+              ? userType === 'vendor'
+                ? '/vendor'
+                : '/rfq'
+              : '/auth'
+          }
+        />
+      ),
+      errorElement: <PageNotFound />,
+    },
+    {
+      path: '/vendor',
       element: (
         <ProtectedRoute>
           <MainLayout />
@@ -28,16 +51,16 @@ const Routing = () => {
       ),
       children: [
         {
-          path: '/',
+          path: 'dashboard',
           element: (
             <ProtectedRoute>
-              <Dashboard />
+              <VendorDashboard />
             </ProtectedRoute>
           ),
           errorElement: <PageNotFound />,
         },
         {
-          path: '/bank_details',
+          path: 'bank_details',
           element: (
             <ProtectedRoute>
               <BankDetails />
@@ -46,10 +69,69 @@ const Routing = () => {
           errorElement: <PageNotFound />,
         },
         {
-          path: '/account',
+          path: 'account',
           element: (
             <ProtectedRoute>
               <Account />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: 'orders',
+          element: (
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: 'invoice',
+          element: (
+            <ProtectedRoute>
+              <Invoices />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: '*',
+          element: <PageNotFound />,
+        },
+      ],
+    },
+    {
+      path: '/rfq',
+      element: (
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          path: 'dashboard',
+          element: (
+            <ProtectedRoute>
+              <RfqDashboard />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: 'company',
+          element: (
+            <ProtectedRoute>
+              <RfqDashboard />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: 'officers',
+          element: (
+            <ProtectedRoute>
+              <RfqDashboard />
             </ProtectedRoute>
           ),
           errorElement: <PageNotFound />,
