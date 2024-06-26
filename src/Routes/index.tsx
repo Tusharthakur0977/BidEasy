@@ -3,12 +3,20 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
+import { useAuth } from '../Context/AuthContext';
 import MainLayout from '../Layout/MainLayout';
 import UnAuthLayout from '../Layout/UnAuthLayout';
 import DocsCheckList from '../Pages/DocsCheckList';
 import { HelpVideo } from '../Pages/HelpVideo/HelpVideo';
 import PageNotFound from '../Pages/PageNotFound';
 import PanRegister from '../Pages/PanRegister';
+import Invoice from '../Pages/RFQ/Invoice';
+import POList from '../Pages/RFQ/POList';
+import PRList from '../Pages/RFQ/PRList';
+import RfqDashboard from '../Pages/RFQ/RfqDashboard';
+import RFQList from '../Pages/RFQ/RFQList';
+import Suppliers from '../Pages/RFQ/Suppliers';
+import VendorApprovals from '../Pages/RFQ/VendorApprovals';
 import SetPassword from '../Pages/SetPassword';
 import SignIn from '../Pages/SignIn';
 import SignUp from '../Pages/SignUp';
@@ -21,8 +29,6 @@ import Invoices from '../Pages/Vendor/Invoices';
 import Orders from '../Pages/Vendor/Orders';
 import ProtectedRoute from './ProtectedRoute';
 import UnProtectedRoute from './UnProtectedRoute';
-import RfqDashboard from '../Pages/RFQ/RfqDashboard';
-import { useAuth } from '../Context/AuthContext';
 
 const Routing = () => {
   const { userType, isAuthenticated } = useAuth();
@@ -36,7 +42,7 @@ const Routing = () => {
               ? userType === 'vendor'
                 ? '/vendor'
                 : '/rfq'
-              : '/auth'
+              : '/auth/signin'
           }
         />
       ),
@@ -114,6 +120,63 @@ const Routing = () => {
           element: (
             <ProtectedRoute>
               <RfqDashboard />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+          action: true,
+          children: [
+            {
+              path: 'rfqList',
+              element: (
+                <ProtectedRoute>
+                  <RFQList />
+                </ProtectedRoute>
+              ),
+              errorElement: <PageNotFound />,
+            },
+            {
+              path: 'prList',
+              element: (
+                <ProtectedRoute>
+                  <PRList />
+                </ProtectedRoute>
+              ),
+              errorElement: <PageNotFound />,
+            },
+            {
+              path: 'suppliers',
+              element: (
+                <ProtectedRoute>
+                  <Suppliers />
+                </ProtectedRoute>
+              ),
+              errorElement: <PageNotFound />,
+            },
+            {
+              path: 'poList',
+              element: (
+                <ProtectedRoute>
+                  <POList />
+                </ProtectedRoute>
+              ),
+              errorElement: <PageNotFound />,
+            },
+            {
+              path: 'invoice',
+              element: (
+                <ProtectedRoute>
+                  <Invoice />
+                </ProtectedRoute>
+              ),
+              errorElement: <PageNotFound />,
+            },
+          ],
+        },
+        {
+          path: 'vendors_approvals',
+          element: (
+            <ProtectedRoute>
+              <VendorApprovals />
             </ProtectedRoute>
           ),
           errorElement: <PageNotFound />,

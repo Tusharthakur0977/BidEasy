@@ -24,3 +24,13 @@ export const MSMETypeData = [
   { title: 'Micro', value: 'micro' },
   { title: 'Not registered', value: 'not_registered' },
 ];
+
+export const VENDORSTABLEHEADINGS = [
+  'VENDOR NAME',
+  'PAN',
+  'GST',
+  'DATE',
+  'VENDOR ID',
+  'VENDOR CODE',
+  'ACTIONS',
+];

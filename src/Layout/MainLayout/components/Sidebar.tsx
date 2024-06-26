@@ -30,9 +30,14 @@ const VendorSideRoutes = [
 
 const RfqSideRoutes = [
   {
-    title: 'Vendors',
+    title: 'Dashboard',
     icon: <MdOutlineSpaceDashboard size={24} />,
-    path: 'dashboard',
+    path: 'dashboard/rfqList',
+  },
+  {
+    title: 'Vendors Approvals',
+    icon: <MdOutlineSpaceDashboard size={24} />,
+    path: 'vendors_approvals',
   },
   {
     title: 'Company',
@@ -49,6 +54,7 @@ const RfqSideRoutes = [
 const Sidebar = () => {
   const location = useLocation();
   const { setIsAuthenticated, userType } = useAuth();
+  console.log(location.pathname);
 
   return (
     <aside className='w-full h-screen transition-transform -translate-x-full md:translate-x-0'>
@@ -98,9 +104,12 @@ const Sidebar = () => {
               ))
             : RfqSideRoutes.map((item, index) => (
                 <Link
+                  key={item + index.toString()}
                   to={item.path}
                   className={`flex items-center px-2 py-3 gap-3 ${
-                    location.pathname === `/rfq/${item.path}`
+                    location.pathname.includes(
+                      `/rfq/${item.path.split('/')[0]}`
+                    )
                       ? 'bg-white font-bold text-gray-900'
                       : 'font-medium text-white'
                   }  rounded-lg hover:bg-gray-100 hover:text-black transition duration-300 ease-in-out`}

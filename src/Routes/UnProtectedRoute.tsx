@@ -11,7 +11,7 @@ const UnProtectedRoute: FC<UnProtectedRouteProps> = ({ children }) => {
 
   if (isAuthenticated) {
     if (userType === 'rfq') {
-      return <Navigate to='/rfq/dashboard' />;
+      return <Navigate to='/rfq/dashboard/rfqList' />;
     }
     if (userType === 'vendor') {
       return <Navigate to='/vendor/dashboard' />;
