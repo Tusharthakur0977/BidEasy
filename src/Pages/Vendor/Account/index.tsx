@@ -2,9 +2,13 @@ import { useMemo, useState } from 'react';
 import CompanyInfo from './components/CompanyInfo/CompanyInfo';
 import ProfileInfo from './components/ProfileInfo/ProfileInfo';
 import TopTabs from './components/TopTabs';
+import { useSearchParams } from 'react-router-dom';
 
 const Account = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [queryParams] = useSearchParams();
+  const tab = queryParams.get('tab');
+  const selectedTab = tab === 'companyInfo' ? 1 : 0;
+  const [currentStep, setCurrentStep] = useState(selectedTab);
 
   const renderSelectedTabSection = useMemo(() => {
     switch (currentStep) {

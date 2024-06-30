@@ -3,6 +3,7 @@ import { AuthProvider } from './Context/AuthContext';
 import { VendorProvider } from './Context/VendorContext';
 import Routing from './Routes';
 import { ModalProvider } from './Context/ModalContext';
+import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient();
 function App() {
@@ -13,6 +14,7 @@ function App() {
           <ModalProvider>
             <VendorProvider>
               <Routing />
+              <Toaster />
             </VendorProvider>
           </ModalProvider>
         </AuthProvider>

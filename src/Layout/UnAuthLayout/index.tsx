@@ -1,15 +1,50 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import HeadBar from './components/HeadBar';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import IMAGES from '../../Assets/images';
+import { useVerifyInvitationLink } from '../../Hooks/API/useVerifyInvitationLink';
+import { CONSTANTS } from '../../Utils/LocalKeys';
+import HeadBar from './components/HeadBar';
+
+const signUpRoutes = [
+  '/auth/signup',
+  '/auth/signup/pan',
+  '/auth/signup/setpassword',
+];
 
 const UnAuthLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const signUpRoutes = [
-    '/auth/signup',
-    '/auth/signup/pan',
-    '/auth/signup/setpassword',
-  ];
+  const [queryParams] = useSearchParams();
+  const registrationToken = queryParams.get(CONSTANTS.REGISTER_TOKEN);
+  const email = queryParams.get(CONSTANTS.EMAIL);
+
+  const verifyInvitationLinkAPI = useVerifyInvitationLink();
+
+  useEffect(() => {
+    if (registrationToken && email) {
+      verifyInvitationLinkAPI
+        .mutateAsync({ token: registrationToken, email: email })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.status, 'RES');
+          }
+        })
+        .catch((err) => {
+          console.log(err, 'err');
+          if (err.response.status === 403) {
+            navigate('/invalid_link');
+          }
+        });
+    }
+  }, []);
 
   return (
     <div className='w-screen h-screen flex relative px-16 py-20'>

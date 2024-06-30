@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import SVGIcon from '../../Components/SVGIcon';
-import ICONS from '../../Assets/icons';
+import toast from 'react-hot-toast';
 import COLORS from '../../Assets/colors';
+import ICONS from '../../Assets/icons';
+import SVGIcon from '../../Components/SVGIcon';
 import { useAuth } from '../../Context/AuthContext';
+import { useVendorSignInApi } from '../../Hooks/API/useVendorApis';
+import { isValidEmail, setLocalItem } from '../../Utils/Helpers';
+import LOCAL_STORAGE_KEYS from '../../Utils/LocalKeys';
 
 const SignIn = () => {
   const { setUserType, setIsAuthenticated } = useAuth();
+  const vendorSignInAPI = useVendorSignInApi();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,9 +21,37 @@ const SignIn = () => {
     setShowPassword(!showPassword);
   };
 
-  const onSubmit = () => {
-    setUserType('rfq');
-    setIsAuthenticated(true);
+  const onSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      toast.error('Please enter a valid Email');
+      return;
+    }
+
+    if (!password.trim()) {
+      toast.error('Please enter your password');
+      return;
+    }
+
+    vendorSignInAPI
+      .mutateAsync({ email, password })
+      .then((res) => {
+        if (res.status === 200) {
+          setLocalItem(LOCAL_STORAGE_KEYS.TOKEN, res.data.token);
+          setLocalItem(LOCAL_STORAGE_KEYS.USER, res.data.user);
+          if (res.data.user.userType === 'VENDOR') {
+            setLocalItem(LOCAL_STORAGE_KEYS.USER_TYPE, res.data.user.userType);
+            setUserType(res.data.user.userType);
+            setLocalItem(LOCAL_STORAGE_KEYS.IS_AUTHENTICATED, true);
+            setIsAuthenticated(true);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('Something went wrong! Please try again later.');
+      });
   };
 
   return (

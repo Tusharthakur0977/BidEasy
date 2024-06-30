@@ -8,6 +8,12 @@ import { TbFileInvoice } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from '../../../Assets/images';
 import { useAuth } from '../../../Context/AuthContext';
+import {
+  getFullUserName,
+  getLocalItem,
+  resetLocalStorage,
+} from '../../../Utils/Helpers';
+import LOCAL_STORAGE_KEYS from '../../../Utils/LocalKeys';
 
 const VendorSideRoutes = [
   {
@@ -54,7 +60,15 @@ const RfqSideRoutes = [
 const Sidebar = () => {
   const location = useLocation();
   const { setIsAuthenticated, userType } = useAuth();
-  console.log(location.pathname);
+
+  const user = getLocalItem(LOCAL_STORAGE_KEYS.USER);
+
+  console.log(user.firstName);
+
+  const handleLogout = () => {
+    resetLocalStorage();
+    setIsAuthenticated(false);
+  };
 
   return (
     <aside className='w-full h-screen transition-transform -translate-x-full md:translate-x-0'>
@@ -63,7 +77,7 @@ const Sidebar = () => {
           <p className='text-3xl font-bold text-white'>BIDEASY</p>
         </div>
 
-        {userType === 'vendor' && (
+        {userType === 'VENDOR' && (
           <div className='w-[85%] flex justify-center flex-col my-4 gap-3'>
             <div className='flex items-center gap-3 py-4 w-full'>
               <img
@@ -72,12 +86,14 @@ const Sidebar = () => {
                 width={50}
                 alt=''
               />
-              <p className='font-medium text-lg text-white'>Abhinav</p>
+              <p className='font-medium text-lg text-white'>
+                {getFullUserName()}
+              </p>
             </div>
             <Link
               to={'account'}
               className={`flex items-center ${
-                location.pathname === 'vendor/account'
+                location.pathname === '/vendor/account'
                   ? 'bg-white text-black font-bold'
                   : 'font-medium text-white'
               }  px-2 py-3 gap-3 w-full rounded-lg hover:bg-white hover:text-black transition duration-300 ease-in-out`}
@@ -88,7 +104,7 @@ const Sidebar = () => {
           </div>
         )}
         <ul className='space-y-5 w-[85%] my-4 flex-1'>
-          {userType === 'vendor'
+          {userType === 'VENDOR'
             ? VendorSideRoutes.map((item, index) => (
                 <Link
                   to={item.path}
@@ -121,7 +137,7 @@ const Sidebar = () => {
         </ul>
 
         <div
-          onClick={() => setIsAuthenticated(false)}
+          onClick={handleLogout}
           className={`flex items-center px-2 py-3 gap-3 w-[85%] my-5 font-medium rounded-lg hover:bg-white hover:text-black text-white transition duration-300 ease-in-out`}
         >
           <LuLogOut size={24} />

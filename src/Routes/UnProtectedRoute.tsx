@@ -10,10 +10,10 @@ const UnProtectedRoute: FC<UnProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, userType } = useAuth();
 
   if (isAuthenticated) {
-    if (userType === 'rfq') {
+    if (userType === 'RFQ') {
       return <Navigate to='/rfq/dashboard/rfqList' />;
     }
-    if (userType === 'vendor') {
+    if (userType === 'VENDOR') {
       return <Navigate to='/vendor/dashboard' />;
     }
   }

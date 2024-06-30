@@ -1,13 +1,14 @@
 import COLORS from '../../../../Assets/colors';
 import ICONS from '../../../../Assets/icons';
 import SVGIcon from '../../../../Components/SVGIcon';
+import { getFullUserName } from '../../../../Utils/Helpers';
 
 const WelcomeCard = () => {
   return (
     <div className='bg-white p-4 my-6 rounded-md flex flex-col'>
       <div className='flex justify-between items-center px-5'>
         <p className='text-2xl'>
-          Welcome <b>Abhinav!</b>
+          Welcome <b>{getFullUserName()}!</b>
         </p>
         <p className='text-lg'>PAN: AALCP2708E</p>
       </div>

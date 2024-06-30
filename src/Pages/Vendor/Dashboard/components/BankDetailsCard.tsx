@@ -22,7 +22,7 @@ const BankDetailsCard = () => {
         </div>
       </div>
       <Link
-        to={'/bank_details'}
+        to={'/vendor/bank_details'}
         className='flex-[0.2] self-start text-white bg-blue-700 font-medium focus:ring-4 focus:outline-none focus:ring-white rounded-lg text-md w-full px-5 py-3 text-center'
       >
         Manage

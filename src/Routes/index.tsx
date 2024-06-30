@@ -9,7 +9,6 @@ import UnAuthLayout from '../Layout/UnAuthLayout';
 import DocsCheckList from '../Pages/DocsCheckList';
 import { HelpVideo } from '../Pages/HelpVideo/HelpVideo';
 import PageNotFound from '../Pages/PageNotFound';
-import PanRegister from '../Pages/PanRegister';
 import Invoice from '../Pages/RFQ/Invoice';
 import POList from '../Pages/RFQ/POList';
 import PRList from '../Pages/RFQ/PRList';
@@ -17,10 +16,10 @@ import RfqDashboard from '../Pages/RFQ/RfqDashboard';
 import RFQList from '../Pages/RFQ/RFQList';
 import Suppliers from '../Pages/RFQ/Suppliers';
 import VendorApprovals from '../Pages/RFQ/VendorApprovals';
-import SetPassword from '../Pages/SetPassword';
 import SignIn from '../Pages/SignIn';
 import SignUp from '../Pages/SignUp';
 import Support from '../Pages/Support';
+import UnAuthorized from '../Pages/UnAuthorized';
 import UserManual from '../Pages/UserManual';
 import Account from '../Pages/Vendor/Account';
 import BankDetails from '../Pages/Vendor/BankDetails';
@@ -39,9 +38,9 @@ const Routing = () => {
         <Navigate
           to={
             isAuthenticated
-              ? userType === 'vendor'
-                ? '/vendor'
-                : '/rfq'
+              ? userType === 'VENDOR'
+                ? '/vendor/dashboard'
+                : '/rfq/dashboard'
               : '/auth/signin'
           }
         />
@@ -223,16 +222,6 @@ const Routing = () => {
           element: <SignUp />,
           errorElement: <PageNotFound />,
         },
-        {
-          path: '/auth/signup/pan',
-          element: <PanRegister />,
-          errorElement: <PageNotFound />,
-        },
-        {
-          path: '/auth/signup/setpassword',
-          element: <SetPassword />,
-          errorElement: <PageNotFound />,
-        },
       ],
     },
     {
@@ -253,6 +242,11 @@ const Routing = () => {
     {
       path: '/support',
       element: <Support />,
+      errorElement: <PageNotFound />,
+    },
+    {
+      path: '/invalid_link',
+      element: <UnAuthorized />,
       errorElement: <PageNotFound />,
     },
   ]);

@@ -6,6 +6,8 @@ import React, {
   useContext,
   useState,
 } from 'react';
+import { getLocalItem } from '../Utils/Helpers';
+import LOCAL_STORAGE_KEYS from '../Utils/LocalKeys';
 
 export interface IUser {
   id: string;
@@ -13,15 +15,15 @@ export interface IUser {
   email: string;
 }
 
-type UserType = 'vendor' | 'rfq';
+type UserType = 'VENDOR' | 'RFQ';
 
 export interface AuthContextType {
   user: IUser | null;
   setUser: Dispatch<SetStateAction<IUser | null>>;
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
-  userType: UserType;
-  setUserType: Dispatch<SetStateAction<UserType>>;
+  userType: UserType | null;
+  setUserType: Dispatch<SetStateAction<UserType | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,9 +33,15 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userType, setUserType] = useState<UserType>('rfq');
+  const [user, setUser] = useState<IUser | null>(
+    getLocalItem(LOCAL_STORAGE_KEYS.USER) || null
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    getLocalItem(LOCAL_STORAGE_KEYS.IS_AUTHENTICATED) || false
+  );
+  const [userType, setUserType] = useState<UserType | null>(
+    getLocalItem(LOCAL_STORAGE_KEYS.USER_TYPE) || null
+  );
 
   return (
     <AuthContext.Provider
