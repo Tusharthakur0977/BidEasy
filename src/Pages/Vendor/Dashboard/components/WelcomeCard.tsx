@@ -1,16 +1,25 @@
 import COLORS from '../../../../Assets/colors';
 import ICONS from '../../../../Assets/icons';
 import SVGIcon from '../../../../Components/SVGIcon';
-import { getFullUserName } from '../../../../Utils/Helpers';
+import { useAppSelector } from '../../../../redux/store';
+import { getVendorBasicDetails } from '../../../../redux/VendorSlices/VendorDataSlice';
 
 const WelcomeCard = () => {
+  const vendorBasicDetails = useAppSelector(getVendorBasicDetails);
+
+  const getFullUserName = () => {
+    return vendorBasicDetails.firstName + ' ' + vendorBasicDetails.lastName;
+  };
+
   return (
     <div className='bg-white p-4 my-6 rounded-md flex flex-col'>
       <div className='flex justify-between items-center px-5'>
         <p className='text-2xl'>
           Welcome <b>{getFullUserName()}!</b>
         </p>
-        <p className='text-lg'>PAN: AALCP2708E</p>
+        <p className='text-lg'>
+          PAN: <strong>{vendorBasicDetails.PAN} </strong>
+        </p>
       </div>
       <div className='h-[1px] w-full bg-gray-300 my-4' />
       <div className='flex flex-col px-4 gap-3'>

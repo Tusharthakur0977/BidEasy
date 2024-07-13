@@ -1,7 +1,12 @@
+import dayjs from 'dayjs';
 import LOCAL_STORAGE_KEYS from './LocalKeys';
 
 export const isValidEmail = (email: string) => {
   return /\S+@\S+\.\S+/.test(email);
+};
+
+export const isValidMobileNumber = (number: string) => {
+  return /^\d{10}$/.test(number);
 };
 
 export const isValidPAN = (panNumber: string) => {
@@ -16,8 +21,6 @@ export const isStrongPassword = (password: string) => {
 };
 
 export const setLocalItem = (key: string, value: any) => {
-  console.log(key, value);
-
   localStorage.setItem(key, JSON.stringify(value));
 };
 
@@ -35,12 +38,26 @@ export const resetLocalStorage = () => {
   removeLocalItem(LOCAL_STORAGE_KEYS.IS_AUTHENTICATED);
   removeLocalItem(LOCAL_STORAGE_KEYS.USER);
   removeLocalItem(LOCAL_STORAGE_KEYS.USER_TYPE);
+  removeLocalItem(LOCAL_STORAGE_KEYS.VENDOR_REGISTRATION_DATA);
 };
 
-export const getFullUserName = () => {
-  return (
-    getLocalItem(LOCAL_STORAGE_KEYS.USER).firstName +
-    ' ' +
-    getLocalItem(LOCAL_STORAGE_KEYS.USER).lastName
-  );
+export function extractPdfFilename(url: string) {
+  // Use URL constructor to parse the URL
+  const urlObj = new URL(url);
+
+  // Extract the pathname from the URL
+  const pathname = urlObj.pathname;
+
+  // Split the pathname by '/' and get the last part
+  const lastSegment = pathname.split('/').pop();
+
+  // Split the last segment by '_' and get the part that contains the filename
+  const filename = lastSegment?.split('_').pop();
+
+  return filename;
+}
+
+export const formatDate = (date: string) => {
+  const formattedDate = dayjs(date).format('MMMM DD, YYYY h:mm A');
+  return formattedDate;
 };

@@ -3,7 +3,6 @@ import {
   Navigate,
   RouterProvider,
 } from 'react-router-dom';
-import { useAuth } from '../Context/AuthContext';
 import MainLayout from '../Layout/MainLayout';
 import UnAuthLayout from '../Layout/UnAuthLayout';
 import DocsCheckList from '../Pages/DocsCheckList';
@@ -26,21 +25,24 @@ import BankDetails from '../Pages/Vendor/BankDetails';
 import VendorDashboard from '../Pages/Vendor/Dashboard';
 import Invoices from '../Pages/Vendor/Invoices';
 import Orders from '../Pages/Vendor/Orders';
+import { useAppSelector } from '../redux/store';
 import ProtectedRoute from './ProtectedRoute';
 import UnProtectedRoute from './UnProtectedRoute';
+import VendorDetails from '../Pages/RFQ/VendorDetails';
 
 const Routing = () => {
-  const { userType, isAuthenticated } = useAuth();
+  const user = useAppSelector((state) => state.user);
+
   const router = createBrowserRouter([
     {
       path: '/',
       element: (
         <Navigate
           to={
-            isAuthenticated
-              ? userType === 'VENDOR'
+            user.isAuthenticated
+              ? user.userType === 'VENDOR'
                 ? '/vendor/dashboard'
-                : '/rfq/dashboard'
+                : '/rfq/dashboard/rfqList'
               : '/auth/signin'
           }
         />
@@ -176,6 +178,15 @@ const Routing = () => {
           element: (
             <ProtectedRoute>
               <VendorApprovals />
+            </ProtectedRoute>
+          ),
+          errorElement: <PageNotFound />,
+        },
+        {
+          path: 'vendors_approvals/vendor_details',
+          element: (
+            <ProtectedRoute>
+              <VendorDetails />
             </ProtectedRoute>
           ),
           errorElement: <PageNotFound />,

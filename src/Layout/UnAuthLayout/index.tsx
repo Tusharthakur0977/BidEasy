@@ -34,7 +34,6 @@ const UnAuthLayout = () => {
         .mutateAsync({ token: registrationToken, email: email })
         .then((res) => {
           if (res.status === 200) {
-            console.log(res.status, 'RES');
           }
         })
         .catch((err) => {
@@ -47,10 +46,10 @@ const UnAuthLayout = () => {
   }, []);
 
   return (
-    <div className='w-screen h-screen flex relative px-16 py-20'>
+    <div className='w-screen h-screen flex lg:flex-row sm:flex-col relative px-16 py-20'>
       <div className='flex flex-[0.7] flex-col justify-between'>
         <HeadBar />
-        <div className=' w-full flex flex-1 justify-center items-center'>
+        <div className='sm:hidden w-full xl:flex flex-1 justify-center items-center'>
           <img
             src={IMAGES.vendorIllustration}
             className='rounded-md h-[70%] w-[70%] object-contain'

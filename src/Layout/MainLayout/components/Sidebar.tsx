@@ -1,5 +1,5 @@
 import { CgCircleci } from 'react-icons/cg';
-import { CiBank, CiSettings } from 'react-icons/ci';
+import { CiSettings } from 'react-icons/ci';
 import { GiPoliceOfficerHead } from 'react-icons/gi';
 import { HiOfficeBuilding } from 'react-icons/hi';
 import { LuLogOut } from 'react-icons/lu';
@@ -7,24 +7,16 @@ import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { TbFileInvoice } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router-dom';
 import IMAGES from '../../../Assets/images';
-import { useAuth } from '../../../Context/AuthContext';
-import {
-  getFullUserName,
-  getLocalItem,
-  resetLocalStorage,
-} from '../../../Utils/Helpers';
-import LOCAL_STORAGE_KEYS from '../../../Utils/LocalKeys';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { setIsAuthenticated } from '../../../redux/userSlices/userSlice';
+import { getVendorBasicDetails } from '../../../redux/VendorSlices/VendorDataSlice';
+import { resetLocalStorage } from '../../../Utils/Helpers';
 
 const VendorSideRoutes = [
   {
     title: 'My Dashboard',
     icon: <MdOutlineSpaceDashboard size={24} />,
     path: 'dashboard',
-  },
-  {
-    title: 'Bank Details',
-    icon: <CiBank size={24} />,
-    path: 'bank_details',
   },
   {
     title: 'Order',
@@ -59,15 +51,18 @@ const RfqSideRoutes = [
 
 const Sidebar = () => {
   const location = useLocation();
-  const { setIsAuthenticated, userType } = useAuth();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
 
-  const user = getLocalItem(LOCAL_STORAGE_KEYS.USER);
+  const vendorBasicDetails = useAppSelector(getVendorBasicDetails);
 
-  console.log(user.firstName);
+  const getFullUserName = () => {
+    return vendorBasicDetails.firstName + ' ' + vendorBasicDetails.lastName;
+  };
 
   const handleLogout = () => {
     resetLocalStorage();
-    setIsAuthenticated(false);
+    dispatch(setIsAuthenticated(false));
   };
 
   return (
@@ -77,7 +72,7 @@ const Sidebar = () => {
           <p className='text-3xl font-bold text-white'>BIDEASY</p>
         </div>
 
-        {userType === 'VENDOR' && (
+        {user.userType === 'VENDOR' && (
           <div className='w-[85%] flex justify-center flex-col my-4 gap-3'>
             <div className='flex items-center gap-3 py-4 w-full'>
               <img
@@ -104,9 +99,10 @@ const Sidebar = () => {
           </div>
         )}
         <ul className='space-y-5 w-[85%] my-4 flex-1'>
-          {userType === 'VENDOR'
+          {user.userType === 'VENDOR'
             ? VendorSideRoutes.map((item, index) => (
                 <Link
+                  key={item.title + index.toString()}
                   to={item.path}
                   className={`flex items-center px-2 py-3 gap-3 ${
                     location.pathname === `/vendor/${item.path}`

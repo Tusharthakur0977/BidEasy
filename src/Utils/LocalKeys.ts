@@ -3,6 +3,7 @@ const LOCAL_STORAGE_KEYS = {
   USER_TYPE: 'userType',
   USER: 'user',
   IS_AUTHENTICATED: 'isAuth',
+  VENDOR_REGISTRATION_DATA: 'vendorDetails',
 };
 
 export const CONSTANTS = {

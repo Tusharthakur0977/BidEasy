@@ -1,26 +1,33 @@
 import { useMemo, useState } from 'react';
 import TopTabs from '../../../Components/TopTabs';
-import { DUMMYVENDORDATA } from '../../../seeds/dummySeeds';
+import { useGetAllVendorListApi } from '../../../Hooks/API/useRFQApis';
 import VendorsTable from './components/VendorsTable';
 
-const TopTabsData = ['PENDING', 'APPROVED', 'RETURNED'];
+const TopTabsData = ['PENDING', 'APPROVED'];
 
 const VendorApprovals = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const { data } = useGetAllVendorListApi(currentPage, limit);
+
   const [currentStep, setCurrentStep] = useState(0);
 
   const filteredData = useMemo(() => {
-    if (!DUMMYVENDORDATA) return [];
+    if (data?.vendors.length === 0) return [];
     switch (currentStep) {
       case 0:
-        return DUMMYVENDORDATA.filter((vendor) => vendor.STATUS === 'Pending');
+        return data?.vendors?.filter(
+          (vendor) => vendor?.overAllApprovalStatus === 'PENDING'
+        );
       case 1:
-        return DUMMYVENDORDATA.filter((vendor) => vendor.STATUS === 'Approved');
-      case 2:
-        return DUMMYVENDORDATA.filter((vendor) => vendor.STATUS === 'Returned');
+        return data?.vendors?.filter(
+          (vendor) => vendor?.overAllApprovalStatus === 'APPROVED'
+        );
       default:
         return [];
     }
-  }, [currentStep]);
+  }, [currentStep, data?.vendors]);
 
   return (
     <div className='flex flex-col px-14 py-10 gap-10 bg-[#F5F7F9] min-h-full'>
@@ -30,9 +37,15 @@ const VendorApprovals = () => {
         TopTabsData={TopTabsData}
         currentStep={currentStep}
         setCurrentStep={setCurrentStep}
-        fullBar={true}
       />
-      <VendorsTable data={filteredData} />
+      <VendorsTable
+        currentStep={currentStep}
+        data={filteredData ?? []}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        limit={limit}
+        setLimit={setLimit}
+      />
     </div>
   );
 };

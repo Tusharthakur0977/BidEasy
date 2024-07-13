@@ -3,13 +3,24 @@ import toast from 'react-hot-toast';
 import COLORS from '../../Assets/colors';
 import ICONS from '../../Assets/icons';
 import SVGIcon from '../../Components/SVGIcon';
-import { useAuth } from '../../Context/AuthContext';
+import Spinnner from '../../Components/Spinnner';
 import { useVendorSignInApi } from '../../Hooks/API/useVendorApis';
 import { isValidEmail, setLocalItem } from '../../Utils/Helpers';
 import LOCAL_STORAGE_KEYS from '../../Utils/LocalKeys';
+import {
+  setVendorAccountDetails,
+  setVendorBasicDetails,
+} from '../../redux/VendorSlices/VendorDataSlice';
+import { useAppDispatch } from '../../redux/store';
+import {
+  setIsAuthenticated,
+  setUserType,
+} from '../../redux/userSlices/userSlice';
+import { setRfqBasicDetails } from '../../redux/BuyerSlices/rfqDataSlice';
 
 const SignIn = () => {
-  const { setUserType, setIsAuthenticated } = useAuth();
+  const dispatch = useAppDispatch();
+
   const vendorSignInAPI = useVendorSignInApi();
 
   const [email, setEmail] = useState('');
@@ -39,12 +50,24 @@ const SignIn = () => {
       .then((res) => {
         if (res.status === 200) {
           setLocalItem(LOCAL_STORAGE_KEYS.TOKEN, res.data.token);
-          setLocalItem(LOCAL_STORAGE_KEYS.USER, res.data.user);
+          setLocalItem(LOCAL_STORAGE_KEYS.USER_TYPE, res.data.user.userType);
           if (res.data.user.userType === 'VENDOR') {
-            setLocalItem(LOCAL_STORAGE_KEYS.USER_TYPE, res.data.user.userType);
-            setUserType(res.data.user.userType);
+            const { details: vendorAccountDetails, ...vendorBasicDetails } =
+              res.data.user;
+            dispatch(setUserType(res.data.user.userType));
+            dispatch(setVendorBasicDetails(vendorBasicDetails));
+            dispatch(setVendorAccountDetails(vendorAccountDetails));
+            dispatch(setIsAuthenticated(true));
             setLocalItem(LOCAL_STORAGE_KEYS.IS_AUTHENTICATED, true);
-            setIsAuthenticated(true);
+            return;
+          }
+          if (res.data.user.userType === 'BUYER') {
+            const rfqBasicDetails = res.data.user;
+            dispatch(setUserType(res.data.user.userType));
+            dispatch(setRfqBasicDetails(rfqBasicDetails));
+            dispatch(setIsAuthenticated(true));
+            setLocalItem(LOCAL_STORAGE_KEYS.IS_AUTHENTICATED, true);
+            return;
           }
         }
       })
@@ -117,9 +140,9 @@ const SignIn = () => {
         <button
           onClick={onSubmit}
           type='submit'
-          className='my-8 text-white bg-blue-700 font-medium focus:ring-4 focus:outline-none focus:ring-white rounded-lg text-md w-full px-5 py-3 text-center'
+          className='my-8 text-white bg-blue-700 font-medium focus:ring-4 focus:outline-none focus:ring-white rounded-lg text-md w-full px-5 py-3 flex items-center justify-center text-center'
         >
-          NEXT
+          {vendorSignInAPI.isLoading ? <Spinnner /> : 'NEXT'}
         </button>
       </form>
     </div>
