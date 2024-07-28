@@ -29,6 +29,7 @@ import { useAppSelector } from '../redux/store';
 import ProtectedRoute from './ProtectedRoute';
 import UnProtectedRoute from './UnProtectedRoute';
 import VendorDetails from '../Pages/RFQ/VendorDetails';
+import CreateRFQ from '../Pages/RFQ/CreateRFQ';
 
 const Routing = () => {
   const user = useAppSelector((state) => state.user);
@@ -134,6 +135,17 @@ const Routing = () => {
                 </ProtectedRoute>
               ),
               errorElement: <PageNotFound />,
+              children: [
+                {
+                  path: 'createRfq',
+                  element: (
+                    <ProtectedRoute>
+                      <CreateRFQ />
+                    </ProtectedRoute>
+                  ),
+                  errorElement: <PageNotFound />,
+                },
+              ],
             },
             {
               path: 'prList',
