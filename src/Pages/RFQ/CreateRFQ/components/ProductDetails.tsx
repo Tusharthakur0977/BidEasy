@@ -1,20 +1,13 @@
-import { useEffect, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
-import { GstClassificationData } from '../../../../seeds/CompanyInfoData';
+import {
+  setClientName,
+  setCurrentAuctioStep,
+  setProducts,
+  setProjectName,
+  setRequirementTitle,
+} from '../../../../redux/BuyerSlices/auctionSlice';
 import { useAppDispatch, useAppSelector } from '../../../../redux/store';
-import { setRfqCurrentStep } from '../../../../redux/BuyerSlices/rfqProcessSlice';
-
-
-
-interface IProductDetails {
-  productCode: string;
-  productName: string;
-  productNumber: string;
-  AnnualVolumeQty: string;
-  UOM: string;
-  deliveryDetails: string;
-  genericName: string;
-}
+import { GstClassificationData } from '../../../../seeds/CompanyInfoData';
 
 const InitalProductState = {
   productCode: '',
@@ -28,16 +21,8 @@ const InitalProductState = {
 
 const ProductDetails = () => {
   const dispatch = useAppDispatch();
-  const { currentStep } = useAppSelector((state) => state.rfqProcessSlice);
-  const [requirementTitle, setRequirementTitle] = useState('');
-  const [projectName, setProjectName] = useState('');
-  const [clientName, setClientName] = useState('');
-
-  const [disableButton, setDisableButton] = useState(false);
-
-  const [products, setProducts] = useState<IProductDetails[]>([
-    InitalProductState,
-  ]);
+  const { currentStep, requirementTitle, projectName, clientName, products } =
+    useAppSelector((state) => state.auctionSlice);
 
   const handleInputChange = (
     index: number,
@@ -49,30 +34,33 @@ const ProductDetails = () => {
       ...newProducts[index],
       [name]: value,
     };
-    setProducts(newProducts);
+    dispatch(setProducts(newProducts));
   };
 
   const checkIsEveryFieldFilled = () => {
-    const isAnythingNotFilled = requirementTitle === '' || projectName === '' || clientName === '' || products.every((product) =>
-      Object.values(product).every((fieldValue) => fieldValue.trim() === '')
-    );
-    setDisableButton(isAnythingNotFilled)
-  }
+    const isTitleAndProjectFilled =
+      requirementTitle.trim() !== '' &&
+      projectName.trim() !== '' &&
+      clientName.trim() !== '';
 
-  useEffect(() => {
-    checkIsEveryFieldFilled();
-  }, [requirementTitle, projectName, clientName, products])
+    const isEveryProductFilled = products.every((product) =>
+      Object.values(product).every((value) => value.trim() !== '')
+    );
+
+    return !(isTitleAndProjectFilled && isEveryProductFilled);
+  };
 
   const handlesave = () => {
-    dispatch(setRfqCurrentStep(currentStep + 1));
-  }
+    dispatch(setCurrentAuctioStep(currentStep + 1));
+  };
+
   const addProductRow = () => {
-    setProducts([...products, InitalProductState]);
+    dispatch(setProducts([...products, InitalProductState]));
   };
 
   const removeProduct = (index: number) => {
     if (products.length > 1)
-      setProducts(products.filter((_, i) => i !== index));
+      dispatch(setProducts(products.filter((_, i) => i !== index)));
   };
 
   return (
@@ -84,7 +72,7 @@ const ProductDetails = () => {
           <div className='relative z-0 w-full mb-5 group'>
             <input
               value={requirementTitle}
-              onChange={(e) => setRequirementTitle(e.target.value)}
+              onChange={(e) => dispatch(setRequirementTitle(e.target.value))}
               type='text'
               name='requirementTitle'
               id='requirementTitle'
@@ -102,7 +90,7 @@ const ProductDetails = () => {
           <div className='relative z-0 w-full mb-5 group'>
             <input
               value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
+              onChange={(e) => dispatch(setProjectName(e.target.value))}
               type='text'
               name='projectName'
               id='projectName'
@@ -120,7 +108,7 @@ const ProductDetails = () => {
           <div className='relative z-0 w-full mb-5 group'>
             <input
               value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
+              onChange={(e) => dispatch(setClientName(e.target.value))}
               type='text'
               name='clientName'
               id='clientName'
@@ -233,6 +221,7 @@ const ProductDetails = () => {
                   </label>
                   <select
                     value={product.UOM}
+                    name='UOM'
                     onChange={(event) => handleInputChange(index, event)}
                     id='UOM'
                     className='block px-4 py-3 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-auto focus:outline-none focus:ring-0 focus:border-gray-200 peer'
@@ -253,7 +242,6 @@ const ProductDetails = () => {
                   <input
                     value={product.deliveryDetails}
                     onChange={(event) => handleInputChange(index, event)}
-                    type='number'
                     name='deliveryDetails'
                     id='deliveryDetails'
                     className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer'
@@ -271,7 +259,6 @@ const ProductDetails = () => {
                   <input
                     value={product.genericName}
                     onChange={(event) => handleInputChange(index, event)}
-                    type='number'
                     name='genericName'
                     id='genericName'
                     className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer'
@@ -298,8 +285,11 @@ const ProductDetails = () => {
           ))}
           <div className='flex justify-end'>
             <button
-              onClick={() => { handlesave() }}
-              className='py-2 px-10  bg-blue-500 text-white rounded-md'
+              disabled={checkIsEveryFieldFilled()}
+              onClick={() => {
+                handlesave();
+              }}
+              className='py-2 px-10 bg-blue-500 text-white rounded-md disabled:opacity-50 '
             >
               Save
             </button>

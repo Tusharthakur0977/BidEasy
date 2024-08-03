@@ -4,15 +4,14 @@ import {
   MdOutlineEventAvailable,
   MdOutlineProductionQuantityLimits,
 } from "react-icons/md";
-import { useAppDispatch, useAppSelector } from "../../../redux/store";
-import ProductDetails from "./components/ProductDetails";
+import { useAppSelector } from '../../../redux/store';
+import ProductDetails from './components/ProductDetails';
 
-import SuppliersList from "./components/SuppliersList";
-import EventSchedule from "./components/EventSchedule";
-import Collaborators from "./components/Collabators";
-import StartEvent from "./components/StartEvent";
+import Collaborators from './components/Collabators';
+import EventSchedule from './components/EventSchedule';
+import StartEvent from './components/StartEvent';
+import SuppliersList from './components/SuppliersList';
 
-const TOTALSTEPS = 5;
 const ICON_SIZE = 25;
 
 const STEPSDATA = [
@@ -64,8 +63,7 @@ const STEPSDATA = [
 ];
 
 const CreateRFQ = () => {
-  const dispatch = useAppDispatch();
-  const { currentStep } = useAppSelector((state) => state.rfqProcessSlice);
+  const { currentStep } = useAppSelector((state) => state.auctionSlice);
 
   const mainStep = useMemo(() => {
     switch (currentStep) {
@@ -78,7 +76,7 @@ const CreateRFQ = () => {
       case 4:
         return <EventSchedule />;
       case 5:
-        return <StartEvent />
+        return <StartEvent />;
       default:
         return null; // Return null or a default component if the currentStep doesn't match any case
     }
