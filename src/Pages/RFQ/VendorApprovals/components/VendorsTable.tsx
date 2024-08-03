@@ -16,6 +16,9 @@ type VendorTableProps = {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   limit: number;
   setLimit: Dispatch<SetStateAction<number>>;
+  isSelectable?: boolean;
+  onSelectRow?: (id: string) => void;
+  selectedItemsId?: string[];
 };
 
 const VendorsTable: FC<VendorTableProps> = ({
@@ -25,6 +28,9 @@ const VendorsTable: FC<VendorTableProps> = ({
   limit,
   setLimit,
   currentStep,
+  isSelectable = false,
+  onSelectRow,
+  selectedItemsId,
 }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -49,6 +55,12 @@ const VendorsTable: FC<VendorTableProps> = ({
     navigate(`vendor_details?id=${id}`);
   };
 
+  const handleClick = (vendor: VendorInList) => {
+    if (onSelectRow) {
+      onSelectRow(vendor.id);
+    }
+  };
+
   const handleApproveVendor = (vendorId: string) => {
     vendorActionApi
       .mutateAsync({
@@ -64,6 +76,7 @@ const VendorsTable: FC<VendorTableProps> = ({
         console.log(err);
       });
   };
+
   const handleRejectVendor = (vendorId: string) => {
     setSelectedVendorId(vendorId);
     dispatch(setVendorRejectionModal(true));
@@ -74,6 +87,7 @@ const VendorsTable: FC<VendorTableProps> = ({
       <table className='w-full text-sm text-left rtl:text-right text-gray-500'>
         <thead className='text-base font-semibold text-gray-700 uppercase bg-blue-100'>
           <tr>
+            {isSelectable ? <th></th> : ''}
             {VENDORSTABLEHEADINGS.map((title) => (
               <th
                 key={title}
@@ -90,8 +104,22 @@ const VendorsTable: FC<VendorTableProps> = ({
             <tr
               role='link'
               key={vendor['id']}
-              className='bg-white border-b'
+              className={`py-2 px-4 border-b ${
+                selectedItemsId?.includes(vendor['id'])
+                  ? 'bg-slate-200'
+                  : 'bg-white border-b'
+              }`}
             >
+              {isSelectable && (
+                <td className='px-4 py-2'>
+                  <input
+                    type='checkbox'
+                    checked={selectedItemsId?.includes(vendor['id'])}
+                    className='form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out'
+                    onClick={() => handleClick(vendor)}
+                  />
+                </td>
+              )}
               <td className='px-6 py-4 font-bold whitespace-nowrap'>
                 {`${vendor['firstName']} ${vendor['lastName']}`}
               </td>

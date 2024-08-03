@@ -1,17 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
+import auctionSlice from './BuyerSlices/auctionSlice';
+import rfqDataSlice from './BuyerSlices/rfqDataSlice';
+import modalSlice from './modalSlices/modalSlice';
 import userSlice from './userSlices/userSlice';
 import additionalInfoSlice from './VendorSlices/additionalInfoSlice';
 import bankInfoSlice from './VendorSlices/bankInfoSlice';
 import basicCompanyInfoSlice from './VendorSlices/basicCompanyinfoSlice';
 import certificatesSlice from './VendorSlices/certificatesSlice';
 import LicensesInfoSlice from './VendorSlices/LicensesInfoSlice';
+import profileSLice from './VendorSlices/profileSLice';
 import taxSlice from './VendorSlices/taxSlice';
 import VendorDataSlice from './VendorSlices/VendorDataSlice';
-import profileSLice from './VendorSlices/profileSLice';
-import modalSlice from './modalSlices/modalSlice';
-import rfqDataSlice from './BuyerSlices/rfqDataSlice';
-import rfqProcessSlice from './BuyerSlices/rfqProcessSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +26,7 @@ export const store = configureStore({
     profileSlice: profileSLice,
     modalSlice: modalSlice,
     rfqDataSlice: rfqDataSlice,
-    rfqProcessSlice: rfqProcessSlice,
+    auctionSlice: auctionSlice,
   },
 });
 

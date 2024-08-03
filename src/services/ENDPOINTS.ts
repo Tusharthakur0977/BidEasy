@@ -8,11 +8,11 @@ const ENDPOINTS = {
 
   // ----------------------------------------------------------------
   rfqVendorsList: '/admin/vendor/users',
-  inviteVendor: '/rfq/inviteVendor',
-  checkVendorFOrPan: '/rfq/panVerify',
-  allVenodrList: '/rfq/vendorsList',
-  vendorById: '/rfq/vendor_detail',
-  vendorAction: '/rfq/vendorAction',
+  inviteVendor: '/buyer/inviteVendor',
+  checkVendorFOrPan: '/buyer/panVerify',
+  allVenodrList: '/buyer/vendorsList',
+  vendorById: '/buyer/vendor_detail',
+  vendorAction: '/buyer/vendorAction',
 };
 
 export default ENDPOINTS;

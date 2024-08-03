@@ -45,6 +45,7 @@ const VendorApprovals = () => {
         setCurrentPage={setCurrentPage}
         limit={limit}
         setLimit={setLimit}
+        isSelectable={false}
       />
     </div>
   );

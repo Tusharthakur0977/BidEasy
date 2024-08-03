@@ -145,6 +145,15 @@ const Routing = () => {
                   ),
                   errorElement: <PageNotFound />,
                 },
+                {
+                  path: 'createRfq/vendor_details',
+                  element: (
+                    <ProtectedRoute>
+                      <VendorDetails />
+                    </ProtectedRoute>
+                  ),
+                  errorElement:<PageNotFound/>
+                },
               ],
             },
             {
