@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { GstClassificationData } from '../../../../seeds/CompanyInfoData';
+import { useAppDispatch, useAppSelector } from '../../../../redux/store';
+import { setRfqCurrentStep } from '../../../../redux/BuyerSlices/rfqProcessSlice';
+
+
 
 interface IProductDetails {
   productCode: string;
@@ -23,9 +27,13 @@ const InitalProductState = {
 };
 
 const ProductDetails = () => {
+  const dispatch = useAppDispatch();
+  const { currentStep } = useAppSelector((state) => state.rfqProcessSlice);
   const [requirementTitle, setRequirementTitle] = useState('');
   const [projectName, setProjectName] = useState('');
   const [clientName, setClientName] = useState('');
+
+  const [disableButton, setDisableButton] = useState(false);
 
   const [products, setProducts] = useState<IProductDetails[]>([
     InitalProductState,
@@ -44,6 +52,20 @@ const ProductDetails = () => {
     setProducts(newProducts);
   };
 
+  const checkIsEveryFieldFilled = () => {
+    const isAnythingNotFilled = requirementTitle === '' || projectName === '' || clientName === '' || products.every((product) =>
+      Object.values(product).every((fieldValue) => fieldValue.trim() === '')
+    );
+    setDisableButton(isAnythingNotFilled)
+  }
+
+  useEffect(() => {
+    checkIsEveryFieldFilled();
+  }, [requirementTitle, projectName, clientName, products])
+
+  const handlesave = () => {
+    dispatch(setRfqCurrentStep(currentStep + 1));
+  }
   const addProductRow = () => {
     setProducts([...products, InitalProductState]);
   };
@@ -54,7 +76,7 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className='flex flex-col items-center gap-10 flex-1 px-5 py-3 shadow-lg rounded-md'>
+    <div className='flex flex-col items-center gap-5 flex-1  shadow-lg rounded-md'>
       <p className='font-medium text-xl'>Product Requirement Specification</p>
 
       <div className='flex flex-col gap-10 w-full max-h-[650px] py-4 scrollable-div px-5'>
@@ -276,7 +298,7 @@ const ProductDetails = () => {
           ))}
           <div className='flex justify-end'>
             <button
-              onClick={() => {}}
+              onClick={() => { handlesave() }}
               className='py-2 px-10  bg-blue-500 text-white rounded-md'
             >
               Save

@@ -1,13 +1,14 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import VendorRejectionModal from '../../../../Components/Modals/VendorRejectionModal';
 import { useVendorActionApi } from '../../../../Hooks/API/useRFQApis';
 import { setVendorRejectionModal } from '../../../../redux/modalSlices/modalSlice';
-import { useAppDispatch } from '../../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../../redux/store';
 import { VENDORSTABLEHEADINGS } from '../../../../seeds/CompanyInfoData';
 import { VendorInList } from '../../../../typings/RFQTypes';
 import { formatDate } from '../../../../Utils/Helpers';
+import { deselectVendor, selectVendor } from '../../../../redux/SuppliersSlice/rfqSelectedSlice';
 
 type VendorTableProps = {
   currentStep: number;
@@ -16,6 +17,7 @@ type VendorTableProps = {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   limit: number;
   setLimit: Dispatch<SetStateAction<number>>;
+  isSelectable: boolean
 };
 
 const VendorsTable: FC<VendorTableProps> = ({
@@ -25,6 +27,7 @@ const VendorsTable: FC<VendorTableProps> = ({
   limit,
   setLimit,
   currentStep,
+  isSelectable,
 }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -32,6 +35,8 @@ const VendorsTable: FC<VendorTableProps> = ({
   const vendorActionApi = useVendorActionApi();
 
   const [selectedVendorId, setSelectedVendorId] = useState('');
+  const [selected, setSelected] = useState(false);
+
 
   const totalPages = Math.ceil(data.length / limit);
   const currentData = data.slice(
@@ -48,6 +53,20 @@ const VendorsTable: FC<VendorTableProps> = ({
   const handleRowClick = (id: string) => {
     navigate(`vendor_details?id=${id}`);
   };
+
+  const handleClick = (vendor: VendorInList) => {
+    setSelectedVendorId(vendor.id)
+    setSelected(prevSelected => !prevSelected)
+    updateTableClick(vendor.id)
+  }
+
+  const updateTableClick = (vendor: string) => {
+    selected ? dispatch(selectVendor(vendor)) : dispatch(deselectVendor(vendor));
+  }
+
+  useEffect(() => {
+    if (selectedVendorId !== null) updateTableClick(selectedVendorId)
+  }, [selected, selectedVendorId])
 
   const handleApproveVendor = (vendorId: string) => {
     vendorActionApi
@@ -74,6 +93,10 @@ const VendorsTable: FC<VendorTableProps> = ({
       <table className='w-full text-sm text-left rtl:text-right text-gray-500'>
         <thead className='text-base font-semibold text-gray-700 uppercase bg-blue-100'>
           <tr>
+
+            {
+              (isSelectable) ? <th></th> : ''
+            }
             {VENDORSTABLEHEADINGS.map((title) => (
               <th
                 key={title}
@@ -90,8 +113,18 @@ const VendorsTable: FC<VendorTableProps> = ({
             <tr
               role='link'
               key={vendor['id']}
-              className='bg-white border-b'
+              className={`py-2 px-4 border-b ${isSelectable && selected && selectedVendorId === vendor['id'] ? 'bg-slate-200' : 'bg-white border-b'
+                }`}
             >
+              {isSelectable && <td className="px-4 py-2">
+                <input
+                  type="checkbox"
+                  checked={selected && selectedVendorId === vendor['id']}
+                  className='form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out'
+                  onClick={() => handleClick(vendor)}
+                />
+              </td>
+              }
               <td className='px-6 py-4 font-bold whitespace-nowrap'>
                 {`${vendor['firstName']} ${vendor['lastName']}`}
               </td>
@@ -154,11 +187,10 @@ const VendorsTable: FC<VendorTableProps> = ({
             <li key={page}>
               <button
                 onClick={() => handlePageChange(page)}
-                className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 ${
-                  currentPage === page
-                    ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700'
-                    : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
-                }`}
+                className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 ${currentPage === page
+                  ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700'
+                  : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                  }`}
               >
                 {page}
               </button>

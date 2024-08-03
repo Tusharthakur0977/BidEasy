@@ -12,6 +12,7 @@ import profileSLice from './VendorSlices/profileSLice';
 import modalSlice from './modalSlices/modalSlice';
 import rfqDataSlice from './BuyerSlices/rfqDataSlice';
 import rfqProcessSlice from './BuyerSlices/rfqProcessSlice';
+import rfqSelectedSlice from './SuppliersSlice/rfqSelectedSlice';
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +28,7 @@ export const store = configureStore({
     modalSlice: modalSlice,
     rfqDataSlice: rfqDataSlice,
     rfqProcessSlice: rfqProcessSlice,
+    rfqSelectedSlice: rfqSelectedSlice
   },
 });
 
